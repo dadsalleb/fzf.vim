@@ -50,8 +50,10 @@ function! s:defs(commands)
   endfor
 endfunction
 
+"Rg will use options in RIPGREP_CONFIG_PATH
 call s:defs([
 \'command!      -bang -nargs=? -complete=dir Files              call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)',
+\'command!            -nargs=? -complete=dir FilesIn            call fzf#vim#files(<q-args>, fzf#vim#with_preview(), 0)',
 \'command!      -bang -nargs=? GitFiles                         call fzf#vim#gitfiles(<q-args>, fzf#vim#with_preview(<q-args> == "?" ? { "placeholder": "" } : {}), <bang>0)',
 \'command!      -bang -nargs=? GFiles                           call fzf#vim#gitfiles(<q-args>, fzf#vim#with_preview(<q-args> == "?" ? { "placeholder": "" } : {}), <bang>0)',
 \'command! -bar -bang -nargs=? -complete=buffer Buffers         call fzf#vim#buffers(<q-args>, fzf#vim#with_preview({ "placeholder": "{1}" }), <bang>0)',
@@ -60,8 +62,15 @@ call s:defs([
 \'command! -bar -bang Colors                                    call fzf#vim#colors(<bang>0)',
 \'command!      -bang -nargs=+ -complete=dir Locate             call fzf#vim#locate(<q-args>, fzf#vim#with_preview(), <bang>0)',
 \'command!      -bang -nargs=* Ag                               call fzf#vim#ag(<q-args>, fzf#vim#with_preview(), <bang>0)',
-\'command!      -bang -nargs=* Rg                               call fzf#vim#grep("RIPGREP_CONFIG_PATH=" . shellescape($RIPGREP_CONFIG_PATH) . " rg -- ".fzf#shellescape(<q-args>), fzf#vim#with_preview(), <bang>0)',
-\'command!      -bang -nargs=* RG                               call fzf#vim#grep2("rg --column --line-number --no-heading --color=always --smart-case -- ", <q-args>, fzf#vim#with_preview(), <bang>0)',
+ \'command!      -bang -nargs=* Rg                               call fzf#vim#grep("rg -- " . shellescape(<q-args>), fzf#vim#with_preview(), <bang>0)',
+ \'command!                     RgWord                           call fzf#vim#grep("rg -- " . shellescape(expand("<cword>")), 1, fzf#vim#with_preview({"dir": "."}), 0)',
+ \'command!                     RgYanked                         call fzf#vim#grep("rg -- " . shellescape(getreg("\"")), 1, fzf#vim#with_preview({"dir": "."}), 0)',
+ \'command!                     RgClipboard                      call fzf#vim#grep("rg -- " . shellescape(getreg("+")), 1, fzf#vim#with_preview({"dir": "."}), 0)',
+ \'command!      -bang -nargs=? -complete=dir RgIn               call fzf#vim#grep("cd " . (empty(<q-args>) ? "." : <q-args>) . " && rg -- " . shellescape(""), fzf#vim#with_preview({"dir": empty(<q-args>) ? "." : <q-args>}), <bang>0)',
+ \'command!            -nargs=? -complete=dir RgWordIn           call fzf#vim#grep("cd " . (empty(<q-args>) ? "." : <q-args>) . " && rg -- " . shellescape(expand("<cword>")), 1, fzf#vim#with_preview({"dir": empty(<q-args>) ? "." : <q-args>}), 0)',
+ \'command!            -nargs=? -complete=dir RgYankedIn         call fzf#vim#grep("cd " . (empty(<q-args>) ? "." : <q-args>) . " && rg -- " . shellescape(getreg("\"")), 1, fzf#vim#with_preview({"dir": empty(<q-args>) ? "." : <q-args>}), 0)',
+ \'command!            -nargs=? -complete=dir RgClipboardIn      call fzf#vim#grep("cd " . (empty(<q-args>) ? "." : <q-args>) . " && rg -- " . shellescape(getreg("+")), 1, fzf#vim#with_preview({"dir": empty(<q-args>) ? "." : <q-args>}), 0)',
+\'command!      -bang -nargs=* RG                               call fzf#vim#grep2("rg -- ", <q-args>, fzf#vim#with_preview(), <bang>0)',
 \'command!      -bang -nargs=* Tags                             call fzf#vim#tags(<q-args>, fzf#vim#with_preview({ "placeholder": "--tag {2}:{-1}:{3..}" }), <bang>0)',
 \'command!      -bang -nargs=* BTags                            call fzf#vim#buffer_tags(<q-args>, fzf#vim#with_preview({ "placeholder": "{2}:{3..}" }), <bang>0)',
 \'command! -bar -bang Snippets                                  call fzf#vim#snippets(<bang>0)',
